@@ -1,3 +1,4 @@
+
 from django.db import models
 from django.conf import settings
 from django.contrib.sites.models import Site
@@ -5,6 +6,8 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 from django.template.loader import render_to_string, find_template
 from django.template import TemplateDoesNotExist
+from django.utils.safestring import mark_safe
+from django.core.urlresolvers import reverse
 
 
 class Dashboard(models.Model):
@@ -41,9 +44,22 @@ class Thing(models.Model):
         return "featured/{app}.{model}.html".format(app=self.content_type.app_label, model=self.content_type.model)
 
     def render(self):
+        """ Renders this thing against its template, falls back to the default
+        template if the `featured/app.model.html` isn't available. """
         try:
             return render_to_string(self.get_template(), {'object': self.source})
         except TemplateDoesNotExist:
             template = getattr(settings, 'DEFAULT_FEATURED_TEMPLATE', "featured/default.html")
             return render_to_string(template, {'object': self.source})
 
+    def link_to_source(self):
+        """ Get admin link to the original. """
+        href = reverse("admin:{app}_{model}_change".format(
+            app=self.content_type.app_label, 
+            model=self.content_type.model), 
+            args=[self.source.id])
+        html = u"""<a href="{url}">{obj}</a>"""
+        return html.format(url=href, obj=self.source.__unicode__())
+
+    link_to_source.allow_tags = True
+    link_to_source.short_description = "Admin"
