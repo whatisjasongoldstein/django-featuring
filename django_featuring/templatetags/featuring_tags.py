@@ -20,3 +20,11 @@ def get_featured_dashboard(slug):
         if settings.TEMPLATE_DEBUG:
             raise template.TemplateSyntaxError(msg)
         return "<!-- {} -->".format(msg)
+
+
+@register.simple_tag(takes_context=True)
+def render_featured_item(context, item):
+    template = item.get_template()
+    context['object'] = item.source
+    html = template.render(context)
+    return html

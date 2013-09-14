@@ -4,8 +4,8 @@ from django.conf import settings
 from django.contrib.sites.models import Site
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
-from django.template.loader import render_to_string, find_template
-from django.template import TemplateDoesNotExist
+from django.template.loader import select_template
+from django.template import Context
 from django.utils.safestring import mark_safe
 from django.core.urlresolvers import reverse
 
@@ -35,22 +35,25 @@ class Thing(models.Model):
         return self.source.__unicode__()
 
     def get_template(self):
-        if self.template:
-            try: # Idiot-proofing
-                find_template(self.template)
-                return self.template
-            except TemplateDoesNotExist:
-                pass
-        return "featured/{app}.{model}.html".format(app=self.content_type.app_label, model=self.content_type.model)
+        """
+        Returns the first valid template that exists.
+        1. Explicity set template
+        2. featured/app_name.model.html
+        3. The default template.
+        """
+        templates = [
+            self.template,
+            "featured/{app}.{model}.html".format(app=self.content_type.app_label, model=self.content_type.model),
+            getattr(settings, 'DEFAULT_FEATURED_TEMPLATE', "featured/default.html")
+        ]
+        return select_template(templates)
 
     def render(self):
         """ Renders this thing against its template, falls back to the default
         template if the `featured/app.model.html` isn't available. """
-        try:
-            return render_to_string(self.get_template(), {'object': self.source})
-        except TemplateDoesNotExist:
-            template = getattr(settings, 'DEFAULT_FEATURED_TEMPLATE', "featured/default.html")
-            return render_to_string(template, {'object': self.source})
+        template = self.get_template()
+        context = Context({"object": self.source})
+        return template.render(context)
 
     def link_to_source(self):
         """ Get admin link to the original. """

@@ -21,6 +21,7 @@ the allowed ones to your settings file like this:
 
 In your template, fetch your dashboard by slug.
 
+    {% load featuring_tags %}
     {% get_featured_dashboard 'homepage' as featured %}
 
 Then...
@@ -40,6 +41,13 @@ want to create a template named `featured/blog.post.html` and fill it with somet
     </article>
 
 or it will fall back to an ugly default.
+
+If you want to pass context (`with` statements, etc.) to your template, you can use this template tag:
+    
+    {% load featuring_tags %}
+    {% for item featured.things.all %}
+        {% render_featured_item item %}
+    {% endfor %}
 
 Of course, you might want to **use one template for everything.** In that case, you can set `DEFAULT_FEATURED_TEMPLATE`
 in settings, which will be passed every featured thing as `object`. After that, all you have to do is add some conventional
