@@ -32,7 +32,9 @@ class Thing(models.Model):
         ordering = ['order',]
 
     def __unicode__(self):
-        return self.source.__unicode__()
+        obj_name = getattr(self.source, '__unicode__', None)
+        if obj_name:
+            return obj_name()
 
     def get_template(self):
         """
