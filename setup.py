@@ -31,7 +31,7 @@ setup(
     author_email='jason@betheshoe.com',
     url='https://github.com/whatisjasongoldstein/django-featuring',
     packages=[
-        'django-featuring',
+        'django_featuring',
     ],
     include_package_data=True,
     install_requires=[
