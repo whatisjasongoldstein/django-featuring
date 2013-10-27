@@ -26,7 +26,7 @@ setup(
     name='django-featuring',
     version=version,
     description='Promote the good stuff.',
-    long_description=readme + '\n\n' + history,
+    long_description=readme,
     author='Jason Goldstein',
     author_email='jason@betheshoe.com',
     url='https://github.com/whatisjasongoldstein/django-featuring',
