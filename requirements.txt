@@ -1,2 +1,2 @@
-django>=1.5.1
-django-genericadmin
+django>=1.6
+-e git+git@github.com:whatisjasongoldstein/django-genericadmin.git#egg=django-genericadmin-16-fork

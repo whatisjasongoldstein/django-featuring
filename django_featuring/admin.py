@@ -6,9 +6,8 @@ from genericadmin.admin import GenericAdminModelAdmin
 class ThingInline(admin.TabularInline):
     model = Thing
     extra = 0
-    fields = ['content_type', 'object_id', 'link_to_source', 'order']
+    fields = ['content_type', 'object_id', 'order']
     ordering = ['order',]
-    readonly_fields = ['link_to_source',]
 
 class DashboardAdmin(GenericAdminModelAdmin):
     model = Dashboard
