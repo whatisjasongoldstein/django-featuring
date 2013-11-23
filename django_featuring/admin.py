@@ -1,13 +1,15 @@
 from django.conf import settings
 from django.contrib import admin
 from .models import Dashboard, Thing
-from genericadmin.admin import GenericAdminModelAdmin
+from genericadmin.admin import GenericAdminModelAdmin, GenericTabularInline, TabularInlineWithGeneric
 
-class ThingInline(admin.TabularInline):
+class ThingInline(TabularInlineWithGeneric):
     model = Thing
     extra = 0
-    fields = ['content_type', 'object_id', 'order']
+    fields = ['content_type','object_id','order',]
     ordering = ['order',]
+
+    
 
 class DashboardAdmin(GenericAdminModelAdmin):
     model = Dashboard
@@ -15,6 +17,5 @@ class DashboardAdmin(GenericAdminModelAdmin):
 
     if hasattr(settings, 'FEATURABLE_CONTENT_TYPES'):
         content_type_whitelist = settings.FEATURABLE_CONTENT_TYPES
-    
 
 admin.site.register(Dashboard, DashboardAdmin)
