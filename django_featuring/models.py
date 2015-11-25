@@ -35,6 +35,7 @@ class Thing(models.Model):
         obj_name = getattr(self.source, '__unicode__', None)
         if obj_name:
             return obj_name()
+        return "Nothing"
 
     def get_template(self):
         """
