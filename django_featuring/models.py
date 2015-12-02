@@ -3,7 +3,7 @@ from django.db import models
 from django.conf import settings
 from django.contrib.sites.models import Site
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes import generic
+from django.contrib.contenttypes.fields import GenericForeignKey
 from django.template.loader import select_template
 from django.template import Context
 from django.utils.safestring import mark_safe
@@ -25,7 +25,7 @@ class Thing(models.Model):
     order = models.IntegerField()
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
-    source = generic.GenericForeignKey('content_type', 'object_id')
+    source = GenericForeignKey('content_type', 'object_id')
     template = models.CharField(max_length=255, default="", blank=True, help_text="Use a custom template for this item.")
 
     class Meta:
@@ -45,10 +45,11 @@ class Thing(models.Model):
         3. The default template.
         """
         templates = [
-            self.template,
             "featured/{app}.{model}.html".format(app=self.content_type.app_label, model=self.content_type.model),
             getattr(settings, 'DEFAULT_FEATURED_TEMPLATE', "featured/default.html")
         ]
+        if self.template:
+            templates.insert(0, self.template)
         return select_template(templates)
 
     def render(self):
