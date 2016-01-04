@@ -1,17 +1,15 @@
 from django.conf import settings
 from django.contrib import admin
 from .models import Dashboard, Thing
-from genericadmin.admin import GenericAdminModelAdmin, GenericTabularInline, TabularInlineWithGeneric
 
-class ThingInline(TabularInlineWithGeneric):
+class ThingInline(admin.TabularInline):
     model = Thing
     extra = 0
     fields = ['content_type','object_id','order',]
     ordering = ['order',]
 
-    
 
-class DashboardAdmin(GenericAdminModelAdmin):
+class DashboardAdmin(admin.ModelAdmin):
     model = Dashboard
     inlines = [ThingInline,]
 
